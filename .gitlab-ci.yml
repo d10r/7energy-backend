@@ -7,3 +7,7 @@ cache:
 build:
   script:
     - npm install
+
+deploy:
+  script:
+    - npm start
