@@ -10,4 +10,4 @@ build:
 
 deploy:
   script:
-    - npm start
+    - npm start &
