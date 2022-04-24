@@ -15,13 +15,13 @@ export default class Member extends Model {
 
     @ForeignKey(() => Rec)
     @Column
-    recId: number
+    recId: number;
 
     @BelongsTo(() => Rec)
-    rec: Rec
+    rec: Rec;
 
     @HasMany(() => MeterPoint)
-    meterPoints: Member[]
+    meterPoints: Member[];
 
     toString(): string {
         return `member ${this.metadata} in rec with id ${this.recId}, gridSegment ${this.gridSegment}`;

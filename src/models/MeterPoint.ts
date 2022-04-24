@@ -15,13 +15,13 @@ export default class MeterPoint extends Model {
 
     @ForeignKey(() => Member)
     @Column
-    memberId: number
+    memberId: number;
 
     @BelongsTo(() => Member)
-    member: Member
-
+    member: Member;
+    
     @HasMany(() => Measurement)
-    measurements: Measurement[]
+    measurements: Measurement[];
 
 
     toString(): string {

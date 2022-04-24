@@ -7,11 +7,14 @@ export default class Rec extends Model {
     name: string;
 
     @Column
+    metadata: string; // address... inner structure not (yet) exposed
+
+    @Column
     gridSegment: string; // inner structure not exposed
 
     @Column
     publicKey: string;
 
     @HasMany(() => Member)
-    members: Member[]
+    members: Member[];
 }

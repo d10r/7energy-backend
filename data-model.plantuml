@@ -1,0 +1,40 @@
+@startuml
+entity REC {
+  * id
+  --
+  * gridSegment
+  * adminMemberId <<FK>>
+  metadata
+  publicKey
+}
+
+entity Member {
+  * id
+  --
+  metadata
+  gridSegment
+  publicKey
+  recId <<FK>>
+  meterPointId[] <<FK>>
+  role[]
+}
+
+entity MeterPoint {
+  * id
+  --
+  metadata
+  publicKey
+}
+
+entity Measurement {
+  * meterPointId <<FK>>
+  * timestamp
+  --
+  * value
+  * signature
+}
+
+REC }|..o| Member
+Member |o..|| MeterPoint
+MeterPoint }o..|| Measurement
+@enduml

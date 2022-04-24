@@ -2,8 +2,8 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { v4 as uuidv4 } from 'uuid';
-import { Sequelize } from 'sequelize-typescript'
+import { v4 as uuidv4 } from 'uuid'; // TODO: add uuid's to the models
+import { Sequelize } from 'sequelize-typescript';
 import Rec from './models/Rec';
 import {ValidationError} from "sequelize";
 import Member from "./models/Member";
@@ -20,10 +20,9 @@ const sequelize = new Sequelize({
     storage: dbFile,
     //models: [__dirname + '/models/*.ts']
     models: [Rec, Member, MeterPoint, Measurement]
-})
+});
 // creates tables / migrates to new schema if changed
 sequelize.sync({alter: true});
-
 
 const port = parseInt(process.env.PORT || '8001', 10);
 
@@ -34,15 +33,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-
-app.get('/', async (req, res) => {
-    res.send('Hello World');
-});
-
 app.post('/rec', async (req, res) => {
-    const { name } = req.body;
+    const { name, metadata, gridSegment, publicKey } = req.body;
     try {
-        const newRec: Rec = new Rec({name});
+        const newRec: Rec = new Rec({name, metadata, gridSegment, publicKey});
         const ret = await newRec.save();
         console.log(`created new Rec: ${JSON.stringify(newRec)}`);
         res.status(200).send();
@@ -74,9 +68,9 @@ app.get('/recs/:recId/members', async (req, res) => {
 });
 
 app.post('/member', async (req, res) => {
-    const { metadata, recId } = req.body;
+    const { metadata, gridSegment, publicKey, recId } = req.body;
     try {
-        const newMember: Member = new Member({metadata, recId});
+        const newMember: Member = new Member({metadata, gridSegment, publicKey, recId});
         const ret = await newMember.save();
         console.log(`created new Member: ${newMember.toString()}`);
         res.status(200).send();
@@ -88,9 +82,9 @@ app.post('/member', async (req, res) => {
 
 app.post('/recs/:recId/member', async (req, res) => {
     const recId = req.params.recId;
-    const { metadata } = req.body;
+    const { metadata, gridSegment, publicKey } = req.body;
     try {
-        const newMember: Member = new Member({metadata, recId});
+        const newMember: Member = new Member({metadata, gridSegment, publicKey, recId});
         const ret = await newMember.save();
         console.log(`created new Member: ${newMember.toString()} for REC ${recId}`);
         res.status(200).send();
@@ -130,9 +124,9 @@ app.get('/recs/:recId/members', async (req, res) => {
 
 app.post('/members/:memberId/meterpoint', async (req, res) => {
     const memberId = req.params.memberId;
-    const { metadata, mqttTopic } = req.body;
+    const { metadata, publicKey, mqttTopic } = req.body;
     try {
-        const newMeterPoint: MeterPoint = new MeterPoint({metadata, memberId, mqttTopic});
+        const newMeterPoint: MeterPoint = new MeterPoint({metadata, publicKey, memberId, mqttTopic});
         const ret = await newMeterPoint.save();
         console.log(`created new MeterPoint: ${newMeterPoint.toString()} for member ${memberId}`);
         res.status(200).send();
@@ -153,7 +147,7 @@ app.get('/members/:memberId/meterpoints', async (req, res) => {
     res.json(meterpoints);
 });
 
-// TODO: remove
+// TODO: restrict access in prod - may become too expensive in big RECs and be abused for DoS
 app.get('/meterpoints', async (req, res) => {
     const meterpoints = await MeterPoint.findAll();
     res.json(meterpoints);
@@ -162,9 +156,9 @@ app.get('/meterpoints', async (req, res) => {
 
 app.post('/meterpoints/:meterpointId/measurement', async (req, res) => {
     const meterPointId = req.params.meterpointId;
-    const { value } = req.body;
+    const { value, signature, timestamp } = req.body;
     try {
-        const newMeasurement: Measurement = new Measurement({value, meterPointId});
+        const newMeasurement: Measurement = new Measurement({value, signature, timestamp, meterPointId});
         const ret = await newMeasurement.save();
         console.log(`created new measurement: ${newMeasurement.toString()} for member ${meterPointId}`);
         res.status(200).send();
@@ -182,7 +176,7 @@ app.post('/measurement-by-topic', async (req, res) => {
             }
         });
 
-        if (meterPoint == undefined) {
+        if (meterPoint === undefined) {
             console.log('meterpoint not found');
             throw new Error(`no meterpoint found for topic ${mqttTopic}`);
         }
@@ -199,6 +193,7 @@ app.post('/measurement-by-topic', async (req, res) => {
     }
 });
 
+// TODO: add pagination
 app.get('/meterpoints/:meterpointId/measurements', async (req, res) => {
     const meterPointId = req.params.meterpointId;
     console.log(`requested all measurements for meterpoint ${meterPointId}`);

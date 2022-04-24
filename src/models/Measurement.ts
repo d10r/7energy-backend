@@ -1,4 +1,4 @@
-import { Table, Column, Model, ForeignKey, BelongsTo, AllowNull } from 'sequelize-typescript';
+import {Table, Column, Model, ForeignKey, BelongsTo, AllowNull } from 'sequelize-typescript';
 import MeterPoint from './MeterPoint';
 
 @Table
@@ -17,11 +17,12 @@ export default class Measurement extends Model {
 
     @ForeignKey(() => MeterPoint)
     @Column
-    meterPointId: number
+    meterPointId: number;
 
     @BelongsTo(() => MeterPoint)
-    meterPoint: MeterPoint
+    meterPoint: MeterPoint;
 
+    // TODO: add signature check
 /*
     checkSignature () {
         // ...

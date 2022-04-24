@@ -34,7 +34,7 @@ paths:
           description: Validation exception
   /recs/{recId}:
     get:
-      summary: Get defails of a specific rec
+      summary: Get details of a specific rec
       parameters:
         - name: recId
           in: path
