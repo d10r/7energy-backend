@@ -68,3 +68,7 @@ Nachdem der Server gestartet und dadurch die Datenbank initialisiert wurde, kann
 
 Dadurch wird eine EG mit einem Mitglied mit einem Zählpunkt angelegt und für diesen Zählpunkt ein Messwert eingetragen.  
 Anschließend erfolgt eine Abfrage dieser Daten über die API und eine Ausgabe auf der Konsole.
+
+## Lizenz
+
+AGPL-3.0-or-later
