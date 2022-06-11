@@ -71,4 +71,4 @@ Anschließend erfolgt eine Abfrage dieser Daten über die API und eine Ausgabe a
 
 ## Lizenz
 
-AGPL-3.0-or-later
+CC-BY-SA 3.0 AT
